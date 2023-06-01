@@ -1,0 +1,10 @@
+version: '3'
+services:
+  climate-warehouse:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 31310:31310
+    volumes:
+      - ~/.chia/mainnet/climate-warehouse:/root/.chia/mainnet/climate-warehouse
