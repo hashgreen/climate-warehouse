@@ -64,5 +64,5 @@ spec:
       {{- end }}
       volumes:
         - name: config
-          configMap:
-            name: {{ include "climate-warehouse.fullname" . }}-config
+          persistentVolumeClaim:
+            claimName: {{ include "climate-warehouse.fullname" . }}-config
