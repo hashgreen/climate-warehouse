@@ -1,5 +1,5 @@
 ## env for project
-PROJECT_NAME := climate-warehouse
+PROJECT_NAME := ivern2
 APP_NAME := climate-warehouse
 VERSION := `node -p "require('./package.json').version"`
 
@@ -10,6 +10,11 @@ IMAGE_NAME := $(REGISTRY)/$(APP_NAME)
 ## env for helm
 HELM_REPO_NAME := hashgreen
 HELM_REPO_URL := s3://hashgreen-helm-charts/charts
+
+## env for k8s
+DEPLOY_TO := uat
+NS := $(DEPLOY_TO)-$(PROJECT_NAME)
+RELEASE_NAME := $(DEPLOY_TO)-$(APP_NAME)
 
 ## common
 .PHONY: help
@@ -57,3 +62,38 @@ push-helm: ## push helm chart to gcs
 		helm s3 push --force $$file $(HELM_REPO_NAME); \
 	done
 	@helm repo update $(HELM_REPO_NAME)
+
+.PHONY: upgrade-helm
+upgrade-helm: ## upgrade helm chart
+	@echo "Upgrading helm chart..."
+	@echo "$(RELEASE_NAME) to $(VERSION) using $(HELM_REPO_NAME)/$(APP_NAME) in $(NS)"
+	@helm upgrade $(RELEASE_NAME) $(HELM_REPO_NAME)/$(APP_NAME) \
+	--install --namespace $(NS) \
+	--history-max 3 \
+	--values ./deployments/configs/$(DEPLOY_TO)/values.yaml \
+	--set image.tag=$(VERSION)
+
+## deployment
+.PHONY: deploy-uat
+deploy-uat: ## deploy to uat
+	@npm version prerelease --preid=dev
+	@version=`npm pkg get version | xargs echo` && \
+	echo "Deploying version $$version to uat"
+
+	@git push && git push --tags
+
+.PHONY: deploy-uat-upgrade
+deploy-uat-upgrade: ## deploy to uat
+	@npm version preminor --preid=dev
+	@version=`npm pkg get version | xargs echo` && \
+	echo "Deploying version $$version to uat"
+
+	@git push && git push --tags
+
+.PHONY: deploy-stg
+deploy-stg: ## deploy to stg
+	@npm version patch
+	@version=`npm pkg get version | xargs echo` && \
+	echo "Deploying version $$version to stg"
+
+	@git push && git push --tags
