@@ -29,10 +29,12 @@ clean: ## clean artifacts
 ## docker
 .PHONY: build-image
 build-image: ## build docker image
+	@echo "Building docker image... $(IMAGE_NAME):$(VERSION)"
 	@docker build -t $(IMAGE_NAME):$(VERSION) .
 
 .PHONY: push-image
 push-image: ## push docker image to ecr
+	@echo "Pushing docker image... $(IMAGE_NAME):$(VERSION)"
 	@docker push $(IMAGE_NAME):$(VERSION)
 
 ## helm
