@@ -1,6 +1,6 @@
 apiVersion: v2
 name: climate-warehouse
-description: A Helm chart for Kubernetes
+description: A Helm chart for climate warehouse
 
 # A chart can be either an 'application' or a 'library' chart.
 #
