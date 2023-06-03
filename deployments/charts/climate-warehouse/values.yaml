@@ -81,6 +81,15 @@ tolerations: []
 
 affinity: {}
 
+startupProbe:
+  enabled: false
+
+livenessProbe:
+  enabled: false
+
+readinessProbe:
+  enabled: false
+
 # Configuration for the climate-warehouse service
 config:
-  path: /root/.chia/mainnet/climate-warehouse
+  path: /root/.chia/mainnet
