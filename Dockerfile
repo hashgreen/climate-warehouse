@@ -9,8 +9,7 @@ RUN npm set-script postinstall ""
 RUN npm set-script requirements-check ""
 RUN npm install
 RUN json -I -f package.json -e "this.type=\"commonjs\""
-RUN npm build
-
+RUN npm run build
 
 VOLUME ["/root/.chia/mainnet/climate-warehouse"]
 EXPOSE 31310

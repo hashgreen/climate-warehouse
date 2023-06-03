@@ -1,0 +1,59 @@
+name: Release to UAT
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Docker Login
+        uses: docker/login-action@v2.1.0
+        with:
+          registry: 647051440173.dkr.ecr.us-east-2.amazonaws.com
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Build image
+        run: make build-image
+
+      - name: Push image
+        run: make push-image
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - docker
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.7.0
+
+      - name: Helm repo add
+        run: |
+          helm plugin install https://github.com/hypnoglow/helm-s3.git
+          make add-helm-repo
+
+      - name: Kubectl tool installer
+        uses: Azure/setup-kubectl@v3
+
+      - name: Deploy
+        env:
+          KUBECONFIG_FILE: ${{ secrets.UAT_KUBECONFIG }}
+        run: |
+          mkdir -p ~/.kube
+          echo $KUBECONFIG_FILE | base64 --decode > ~/.kube/config && export KUBECONFIG=~/.kube/config
+          make upgrade-helm DEPLOY_TO=uat
