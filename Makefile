@@ -43,24 +43,9 @@ push-image: ## push docker image to ecr
 	@docker push $(IMAGE_NAME):$(VERSION)
 
 ## helm
-.PHONY: lint-helm
-lint-helm: ## lint helm chart
-	@helm lint deployments/charts/*
-
 .PHONY: add-helm-repo
 add-helm-repo: ## add helm repo
 	@helm repo add --no-update $(HELM_REPO_NAME) $(HELM_REPO_URL)
-	@helm repo update $(HELM_REPO_NAME)
-
-.PHONY: package-helm
-package-helm: clean ## package helm chart
-	@helm package -u ./deployments/charts/* --destination ./deployments/charts
-
-.PHONY: push-helm
-push-helm: ## push helm chart to gcs
-	@for file in $(wildcard ./deployments/charts/*.tgz); do \
-		helm s3 push --force $$file $(HELM_REPO_NAME); \
-	done
 	@helm repo update $(HELM_REPO_NAME)
 
 .PHONY: upgrade-helm
