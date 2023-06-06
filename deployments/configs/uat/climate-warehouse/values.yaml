@@ -96,4 +96,4 @@ chia:
 
   ssl:
     enabled: true
-    existingClaim: "uat-datalayer-chia-docker-ssl"
+    existingClaim: "uat-datalayer-chia-docker-config"
