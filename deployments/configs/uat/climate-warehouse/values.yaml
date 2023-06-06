@@ -95,5 +95,5 @@ chia:
   root: /root/.chia/mainnet
 
   ssl:
-    enabled: false
-    existingClaim: "testnet-data-chia-docker-ssl"
+    enabled: true
+    existingClaim: "uat-datalayer-chia-docker-ssl"

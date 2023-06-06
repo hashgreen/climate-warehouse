@@ -23,6 +23,16 @@ help: ## show help
 	@grep -hE '^[ a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 	awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-17s\033[0m %s\n", $$1, $$2}'
 
+.POHNY: continue_if_y
+continue_if_y: ## continue if input is y
+	@read -p "Do you want to continue? [y/n]: " input; \
+	if [ "$$input" = "y" ]; then \
+		echo "Continuing..."; \
+	else \
+		echo "Exiting..."; \
+		exit 1; \
+	fi
+
 .PHONY: version
 version: ## show version
 	@echo $(VERSION)
@@ -51,12 +61,15 @@ add-helm-repo: ## add helm repo
 
 .PHONY: upgrade-helm
 upgrade-helm: ## upgrade helm chart
-	@echo "Upgrading helm chart..."
-	@echo "$(RELEASE_NAME) to $(VERSION) using $(HELM_REPO_NAME)/$(CHART_NAME) in $(NS)"
+	@echo "Upgrading $(RELEASE_NAME) to $(VERSION) using $(HELM_REPO_NAME)/$(CHART_NAME) in $(NS)"
+	@echo "Using values.yaml in ./deployments/configs/$(DEPLOY_TO)/$(APP_NAME)/values.yaml"
+
+	$(MAKE) continue_if_y
+
 	@helm upgrade $(RELEASE_NAME) $(HELM_REPO_NAME)/$(CHART_NAME) \
 	--install --namespace $(NS) \
 	--history-max 3 \
-	--values ./deployments/configs/$(DEPLOY_TO)/values.yaml \
+	--values ./deployments/configs/$(DEPLOY_TO)/$(APP_NAME)/values.yaml \
 	--set image.tag=$(VERSION)
 
 ## deployment
