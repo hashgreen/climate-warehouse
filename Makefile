@@ -10,6 +10,7 @@ IMAGE_NAME := $(REGISTRY)/$(APP_NAME)
 ## env for helm
 HELM_REPO_NAME := hashgreen
 HELM_REPO_URL := s3://hashgreen-helm-charts/charts
+CHART_NAME := climate-warehouse
 
 ## env for k8s
 DEPLOY_TO := uat
@@ -51,8 +52,8 @@ add-helm-repo: ## add helm repo
 .PHONY: upgrade-helm
 upgrade-helm: ## upgrade helm chart
 	@echo "Upgrading helm chart..."
-	@echo "$(RELEASE_NAME) to $(VERSION) using $(HELM_REPO_NAME)/$(APP_NAME) in $(NS)"
-	@helm upgrade $(RELEASE_NAME) $(HELM_REPO_NAME)/$(APP_NAME) \
+	@echo "$(RELEASE_NAME) to $(VERSION) using $(HELM_REPO_NAME)/$(CHART_NAME) in $(NS)"
+	@helm upgrade $(RELEASE_NAME) $(HELM_REPO_NAME)/$(CHART_NAME) \
 	--install --namespace $(NS) \
 	--history-max 3 \
 	--values ./deployments/configs/$(DEPLOY_TO)/values.yaml \
