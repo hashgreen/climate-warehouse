@@ -1,15 +1,15 @@
 'use strict';
 
 import Sequelize from 'sequelize';
-const { Model } = Sequelize;
-import { sequelize } from '../../database';
-import { Meta } from '../../models';
-import datalayer from '../../datalayer';
-import { keyValueToChangeList } from '../../utils/datalayer-utils';
-import { getConfig } from '../../utils/config-loader';
 import { logger } from '../../config/logger.cjs';
+import { sequelize } from '../../database';
+import datalayer from '../../datalayer';
+import { Meta } from '../../models';
+import { getConfig } from '../../utils/config-loader';
+import { keyValueToChangeList } from '../../utils/datalayer-utils';
 import { getDataModelVersion } from '../../utils/helpers';
 import PickListStub from './governance.stub.json';
+const { Model } = Sequelize;
 
 const { GOVERNANCE_BODY_ID } = getConfig().GOVERNANCE;
 
@@ -44,7 +44,9 @@ class Governance extends Model {
     );
 
     const onConfirm = async () => {
-      logger.info('Organization confirmed, you are ready to go');
+      logger.info(
+        'Create GoveranceBody:Organization confirmed, you are ready to go',
+      );
       await Meta.upsert({
         metaKey: 'governanceBodyId',
         metaValue: governanceVersionId,
@@ -56,7 +58,9 @@ class Governance extends Model {
     };
 
     if (!USE_SIMULATOR) {
-      logger.info('Waiting for New Governance Body to be confirmed');
+      logger.info(
+        'Create GoveranceBody:Waiting for New Governance Body to be confirmed',
+      );
       datalayer.getStoreData(
         governanceBodyId,
         onConfirm,
