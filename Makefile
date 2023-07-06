@@ -64,8 +64,6 @@ upgrade-helm: ## upgrade helm chart
 	@echo "Upgrading $(RELEASE_NAME) to $(VERSION) using $(HELM_REPO_NAME)/$(CHART_NAME) in $(NS)"
 	@echo "Using values.yaml in ./deployments/configs/$(DEPLOY_TO)/$(APP_NAME)/values.yaml"
 
-	$(MAKE) continue_if_y
-
 	@helm upgrade $(RELEASE_NAME) $(HELM_REPO_NAME)/$(CHART_NAME) \
 	--install --namespace $(NS) \
 	--history-max 3 \
