@@ -1,11 +1,11 @@
 import { SimpleIntervalJob, Task } from 'toad-scheduler';
+import { logger } from '../config/logger.cjs';
 import { Organization } from '../models';
 import { getConfig } from '../utils/config-loader';
 import {
   assertDataLayerAvailable,
   assertWalletIsSynced,
 } from '../utils/data-assertions';
-import { logger } from '../config/logger.cjs';
 
 const { USE_SIMULATOR } = getConfig().APP;
 
@@ -28,7 +28,7 @@ const task = new Task('sync-organization-meta', async () => {
 });
 
 const job = new SimpleIntervalJob(
-  { days: 1, runImmediately: true },
+  { minutes: 15, runImmediately: true },
   task,
   'sync-organization-meta',
 );
